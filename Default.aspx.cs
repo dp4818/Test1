@@ -33,7 +33,7 @@ namespace P_NW
                 dtP = ds.Tables["Products"];//dtP = ds.Tables[0];
                 dtO = ds.Tables["Orders"];
                 GridView1.DataSource = dtP;
-                
+                GridView1.DataBind(); //呈現資料
             }
         }
     }
