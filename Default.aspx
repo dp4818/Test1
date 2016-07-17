@@ -5,9 +5,12 @@
   
 
     <asp:Panel ID="Panel1" runat="server" Height="177px" style="margin-bottom: 12px">
-        <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox> <%-- gridview只能放在panel或form --%>
-        <asp:GridView ID="GridView1" runat="server">
+        <asp:DropDownList ID="DropDownList1" runat="server">
+        </asp:DropDownList>
 
+        <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
+        <%-- gridview只能放在panel或form --%>
+        <asp:GridView ID="GridView1" runat="server">
         </asp:GridView>
     </asp:Panel>
 

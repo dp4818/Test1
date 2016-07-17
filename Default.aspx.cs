@@ -13,28 +13,45 @@ namespace P_NW
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            using (SqlConnection cn = new SqlConnection())
+            if (!IsPostBack)
             {
-                //"Server="+@"localhost\sqlexpress;"+" database=Northwind;uid=sa;pwd=;";
-                String cnstr = "Server=localhost\\sqlexpress; database=Northwind; uid=sa;pwd=;";
-                cn.ConnectionString = cnstr;
-                cn.Open();
-                if (cn.State == System.Data.ConnectionState.Open) {
-                    TextBox1.Text = "已連接" + cn.ConnectionString + Environment.NewLine ;
+                using (SqlConnection cn = new SqlConnection())
+                {
+                    //"Server="+@"localhost\sqlexpress;"+" database=Northwind;uid=sa;pwd=;";
+                    String cnstr = "Server=localhost\\sqlexpress; database=Northwind; uid=sa;pwd=;";
+                    cn.ConnectionString = cnstr;
+                    cn.Open();
+                    if (cn.State == System.Data.ConnectionState.Open)
+                    {
+                        TextBox1.Text = "已連接" + cn.ConnectionString + Environment.NewLine;
+                    }
+                    DataSet ds = new DataSet();
+                    //將不同資料表存入ds
+                    SqlDataAdapter daProducts = new SqlDataAdapter("SELECT * FROM Products", cn);
+                    daProducts.Fill(ds, "Products");
+                    SqlDataAdapter daOrders = new SqlDataAdapter("SELECT * FROM Orders", cn);
+                    daOrders.Fill(ds, "Orders");
+                    //由ds讀取不同資料表
+                    DataTable dtP, dtO;
+                    dtP = ds.Tables["Products"];//dtP = ds.Tables[0];
+                    dtO = ds.Tables["Orders"];
+                    //GridView1.DataSource = dtP;
+                    //GridView1.DataBind(); //呈現資料
+                    Showgrid(dtP,GridView1);
                 }
-                DataSet ds = new DataSet();
-                //將不同資料表存入ds
-                SqlDataAdapter daProducts = new SqlDataAdapter("SELECT * FROM Products",cn);
-                daProducts.Fill(ds,"Products");
-                SqlDataAdapter daOrders = new SqlDataAdapter("SELECT * FROM Orders", cn);
-                daOrders.Fill(ds,"Orders");
-                //由ds讀取不同資料表
-                DataTable dtP, dtO;
-                dtP = ds.Tables["Products"];//dtP = ds.Tables[0];
-                dtO = ds.Tables["Orders"];
-                GridView1.DataSource = dtP;
-                GridView1.DataBind(); //呈現資料
             }
+        }
+        public void Showgrid(DataTable dt,GridView gv) {
+            DataColumn headdc = new DataColumn();
+            gv.DataSource = dt;
+
+            foreach (DataColumn dc in dt.Columns) {
+                BoundField bf = new BoundField();
+                bf.DataField = dc.ColumnName;
+                bf.HeaderText = dc.ColumnName;
+                gv.Columns.Add(bf);
+            }
+            gv.DataBind();
         }
     }
 }
