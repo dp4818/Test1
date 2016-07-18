@@ -13,21 +13,23 @@ namespace P_NW
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
                 DataSet ds = new DataSet();
                 //將不同資料表存入ds
-                ds = Fillds("SELECT * FROM Products",ds);
-                ds = Fillds("SELECT * FROM Orders", ds);
+                ds = Fillds("SELECT * FROM Products", "Products", ds);
+                ds = Fillds("SELECT * FROM Orders", "Orders", ds);
                 //由ds讀取不同資料表
                 DataTable dtP, dtO;
                 dtP = ds.Tables["Products"];//dtP = ds.Tables[0];
                 dtO = ds.Tables["Orders"];
                 //GridView1.DataSource = dtP;
                 //GridView1.DataBind(); //呈現資料
-                ShowDrop(dtP,DropDownList1);
-            
+                ShowDrop(dtP, DropDownList1);
+            }
 
         }
-        private DataSet Fillds(String s,DataSet ds) {
+        private DataSet Fillds(String sql,String newtablename,DataSet ds) {
             using (SqlConnection cn = new SqlConnection()) {
                 //"Server="+@"localhost\sqlexpress;"+" database=Northwind;uid=sa;pwd=;";
                 String cnstr = "Server=localhost\\sqlExpress;database=Northwind;uid=sa;pwd=;";
@@ -38,8 +40,8 @@ namespace P_NW
                     TextBox1.Text = "已連接" + cn.ConnectionString + Environment.NewLine;
                 }
                 //DataSet ds = new DataSet();
-                SqlDataAdapter da = new SqlDataAdapter(s,cn);
-                da.Fill(ds);
+                SqlDataAdapter da = new SqlDataAdapter(sql,cn);
+                da.Fill(ds,newtablename);
                 return ds;
             }
         }
@@ -58,9 +60,11 @@ namespace P_NW
                 String cnstr = "Server=localhost\\Express;database=Northwind;uid=sa;pwd=;";
                 cn.ConnectionString = cnstr;
                 cn.Open();
-                SqlCommand cmd = new SqlCommand("SELECT UnitPrice FROM Products WHERE ProductsID="+DropDownList1.SelectedIndex);
+                SqlCommand cmd = new SqlCommand("SELECT UnitPrice FROM Products WHERE ProductsID="+DropDownList1.SelectedValue+"");//DropDownList1.SelectedIndex
                 SqlDataReader dr = cmd.ExecuteReader();
                 TextBox2.Text = dr[0].ToString();
+                    
+                
             }
 
                 
